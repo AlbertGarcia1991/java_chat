@@ -13,4 +13,12 @@
         <maven.compiler.target>18</maven.compiler.target>
     </properties>
 
+    <dependencies>
+        <dependency>
+            <groupId>org.tensorflow</groupId>
+            <artifactId>tensorflow</artifactId>
+            <version>1.15.0</version>
+        </dependency>
+    </dependencies>
+
 </project>

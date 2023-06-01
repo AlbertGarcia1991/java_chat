@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.Socket;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class Client {
@@ -8,11 +9,13 @@ public class Client {
     private BufferedWriter bufferedWriter;
     private BufferedReader bufferedReader;
     private String username;
+    private String language;
 
-    public Client(Socket socket, String username) {
+    public Client(Socket socket, String username, String language) {
         try {
             this.socket = socket;
             this.username = username;
+            this.language = language;
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (IOException e) {
@@ -29,10 +32,14 @@ public class Client {
             bufferedWriter.newLine();
             bufferedWriter.flush();
 
+            bufferedWriter.write(language);
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+
             Scanner scanner = new Scanner(System.in);
             while (socket.isConnected()) {
                 String messageToSend = scanner.nextLine();
-                bufferedWriter.write(username + ": " + messageToSend);
+                bufferedWriter.write(messageToSend);
                 bufferedWriter.newLine();
                 bufferedWriter.flush();
             }
@@ -80,14 +87,16 @@ public class Client {
         }
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter your username: ");
         String username = scanner.nextLine();
+        System.out.println("Enter your language: ");
+        String language = scanner.nextLine().toLowerCase(Locale.ROOT);
 
         // Make the connection to the port
         Socket socket = new Socket("localhost", 1234);
-        Client client = new Client(socket, username);
+        Client client = new Client(socket, username, language);
         client.listenForMessage();
         client.sendMessage();
     }
